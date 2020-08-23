@@ -14,18 +14,18 @@ include jQuery, jQuery-UI and lodash.
 ## Usage:
 ```js
 import React from 'react'
-import { Grid, GridStackItem } from 'react-gridstack'
+import { GridStack, GridStackItem } from 'react-gridstack'
 
 class MyGrid extends React.Component {
   render () {
-    <Grid cellHeight={50} verticalMargin={10}>
+    <GridStack cellHeight={50} verticalMargin={10}>
       <GridStackItem id="item_1" x={0} y={0} minHeight={2} minWidth={2}>
         First Item
       </GridStackItem>
       <GridStackItem id="item_2" x={0} y={2}>
         Second Item
       </GridStackItem>
-    </Grid>
+    </GridStack>
   }
 }
 ```
