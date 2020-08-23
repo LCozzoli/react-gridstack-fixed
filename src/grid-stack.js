@@ -1,16 +1,18 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import PropTypes from 'prop-types'
 
 import $ from 'jquery'
-import 'gridstack/dist/gridstack.js'
+import { GridStack } from 'gridstack/dist/gridstack.js'
 import 'gridstack/dist/gridstack.css'
 import differenceWith from 'lodash/differenceWith'
 import map from 'lodash/map'
 
-export default class GridStack extends React.Component {
+export default class Grid extends React.Component {
 
   constructor(props) {
-    super(props)
+    super(props);
+    this.grid;
   }
 
   get layout() {
@@ -32,7 +34,7 @@ export default class GridStack extends React.Component {
   }
 
   clear() {
-    $(this.refs.gridstack).data('gridstack').removeAll()
+    this.grid && this.grid.removeAll()
   }
 
   onAdded(e, items) {
@@ -108,20 +110,20 @@ export default class GridStack extends React.Component {
       width: this.props.width
     }
 
-    const gridstack = $(this.refs.gridstack).gridstack(options).data('gridstack')
-    $(this.refs.gridstack).on('resizestop', this.onResizeStop.bind(this))
-    $(this.refs.gridstack).on('resizestart', this.onResizeStart.bind(this))
-    $(this.refs.gridstack).on('removed', this.onRemoved.bind(this))
-    $(this.refs.gridstack).on('dragstop', this.onDragStop.bind(this))
-    $(this.refs.gridstack).on('dragstart', this.onDragStart.bind(this))
-    $(this.refs.gridstack).on('disable', this.onDisable.bind(this))
-    $(this.refs.gridstack).on('enable', this.onEnable.bind(this))
-    $(this.refs.gridstack).on('change', this.onChange.bind(this))
-    $(this.refs.gridstack).on('added', this.onAdded.bind(this))
+    this.gridstack = GridStack.init(options);
+    this.gridstack.on('resizestop', this.onResizeStop.bind(this))
+    this.gridstack.on('resizestart', this.onResizeStart.bind(this))
+    this.gridstack.on('removed', this.onRemoved.bind(this))
+    this.gridstack.on('dragstop', this.onDragStop.bind(this))
+    this.gridstack.on('dragstart', this.onDragStart.bind(this))
+    this.gridstack.on('disable', this.onDisable.bind(this))
+    this.gridstack.on('enable', this.onEnable.bind(this))
+    this.gridstack.on('change', this.onChange.bind(this))
+    this.gridstack.on('added', this.onAdded.bind(this))
 
 
     this.props.children.forEach(child => {
-      gridstack.addWidget(
+      this.gridstack.addWidget(
         '<div class="grid-stack-item"><div id="' + child.props.id + '" class="grid-stack-item-content"></div></div>',
         child.props.x,
         child.props.y,
@@ -139,15 +141,15 @@ export default class GridStack extends React.Component {
   }
 
   componentWillUnmount(){
-    $(this.refs.gridstack).off('resizestop', this.onResizeStop.bind(this))
-    $(this.refs.gridstack).off('resizestart', this.onResizeStart.bind(this))
-    $(this.refs.gridstack).off('removed', this.onRemoved.bind(this))
-    $(this.refs.gridstack).off('dragstop', this.onDragStop.bind(this))
-    $(this.refs.gridstack).off('dragstart', this.onDragStart.bind(this))
-    $(this.refs.gridstack).off('disable', this.onDisable.bind(this))
-    $(this.refs.gridstack).off('enable', this.onEnable.bind(this))
-    $(this.refs.gridstack).off('change', this.onChange.bind(this))
-    $(this.refs.gridstack).off('added', this.onAdded.bind(this))
+    this.gridstack.off('resizestop', this.onResizeStop.bind(this))
+    this.gridstack.off('resizestart', this.onResizeStart.bind(this))
+    this.gridstack.off('removed', this.onRemoved.bind(this))
+    this.gridstack.off('dragstop', this.onDragStop.bind(this))
+    this.gridstack.off('dragstart', this.onDragStart.bind(this))
+    this.gridstack.off('disable', this.onDisable.bind(this))
+    this.gridstack.off('enable', this.onEnable.bind(this))
+    this.gridstack.off('change', this.onChange.bind(this))
+    this.gridstack.off('added', this.onAdded.bind(this))
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -156,8 +158,6 @@ export default class GridStack extends React.Component {
       this.clear()
       return
     }
-
-    const gridstack = $(this.refs.gridstack).data('gridstack')
 
     // Find any widgets we need to remove
     const toRemove = differenceWith(prevProps.children, this.props.children, (a, b) => {
@@ -182,7 +182,7 @@ export default class GridStack extends React.Component {
       const el = document.getElementById(child.props.id)
       if (el !== null) {
         ReactDOM.unmountComponentAtNode(el)
-        gridstack.removeWidget(el.parentElement)
+        this.gridstack.removeWidget(el.parentElement)
       }
     })
 
@@ -193,7 +193,7 @@ export default class GridStack extends React.Component {
         ReactDOM.unmountComponentAtNode(el)
       }
       else {
-        gridstack.addWidget(
+        this.gridstack.addWidget(
           '<div class="grid-stack-item"><div id="' + child.props.id + '" class="grid-stack-item-content"></div></div>',
           child.props.x,
           child.props.y,
@@ -219,46 +219,46 @@ export default class GridStack extends React.Component {
 }
 
 GridStack.propTypes = {
-  acceptWidgets: React.PropTypes.bool,
-  alwaysShowResizeHandle: React.PropTypes.bool,
-  animate: React.PropTypes.bool,
-  auto: React.PropTypes.bool,
-  cellHeight: React.PropTypes.oneOfType([
-    React.PropTypes.number,
-    React.PropTypes.string
+  acceptWidgets: PropTypes.bool,
+  alwaysShowResizeHandle: PropTypes.bool,
+  animate: PropTypes.bool,
+  auto: PropTypes.bool,
+  cellHeight: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
   ]),
-  children: React.PropTypes.node,
-  disableDrag: React.PropTypes.bool,
-  disableResize: React.PropTypes.bool,
-  draggable: React.PropTypes.object,
-  float: React.PropTypes.bool,
-  handle: React.PropTypes.string,
-  handleClass: React.PropTypes.string,
-  height: React.PropTypes.number,
-  itemClass: React.PropTypes.string,
-  minWidth: React.PropTypes.number,
-  onAdded: React.PropTypes.func,
-  onChange: React.PropTypes.func,
-  onDisable: React.PropTypes.func,
-  onDragStart: React.PropTypes.func,
-  onDragStop: React.PropTypes.func,
-  onEnable: React.PropTypes.func,
-  onRemoved: React.PropTypes.func,
-  onResizeStart: React.PropTypes.func,
-  onResizeStop: React.PropTypes.func,
-  placeholderClass: React.PropTypes.string,
-  placeholderText: React.PropTypes.string,
-  removable: React.PropTypes.bool,
-  removeTimeout: React.PropTypes.number,
-  resizable: React.PropTypes.bool,
-  rtl: React.PropTypes.oneOfType([
-    React.PropTypes.bool,
-    React.PropTypes.string
+  children: PropTypes.node,
+  disableDrag: PropTypes.bool,
+  disableResize: PropTypes.bool,
+  draggable: PropTypes.object,
+  float: PropTypes.bool,
+  handle: PropTypes.string,
+  handleClass: PropTypes.string,
+  height: PropTypes.number,
+  itemClass: PropTypes.string,
+  minWidth: PropTypes.number,
+  onAdded: PropTypes.func,
+  onChange: PropTypes.func,
+  onDisable: PropTypes.func,
+  onDragStart: PropTypes.func,
+  onDragStop: PropTypes.func,
+  onEnable: PropTypes.func,
+  onRemoved: PropTypes.func,
+  onResizeStart: PropTypes.func,
+  onResizeStop: PropTypes.func,
+  placeholderClass: PropTypes.string,
+  placeholderText: PropTypes.string,
+  removable: PropTypes.bool,
+  removeTimeout: PropTypes.number,
+  resizable: PropTypes.bool,
+  rtl: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.string
   ]),
-  staticGrid: React.PropTypes.bool,
-  verticalMargin: React.PropTypes.oneOfType([
-    React.PropTypes.number,
-    React.PropTypes.string
+  staticGrid: PropTypes.bool,
+  verticalMargin: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
   ]),
-  width: React.PropTypes.number
+  width: PropTypes.number
 }
