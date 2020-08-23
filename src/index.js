@@ -1,3 +1,3 @@
-import Grid from './grid-stack';
+import GridStack from './grid-stack';
 import GridStackItem from './grid-stack-item';
-export {Grid, GridStackItem}
+export {GridStack, GridStackItem}
