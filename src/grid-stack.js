@@ -84,30 +84,44 @@ export default class Grid extends React.Component {
   }
 
   componentDidMount() {
-    const options = {
+
+    var options = {
       acceptWidgets: this.props.acceptWidgets,
       alwaysShowResizeHandle: this.props.alwaysShowResizeHandle,
       animate: this.props.animate,
       auto: this.props.auto,
       cellHeight: this.props.cellHeight,
+      column: this.props.column,
+      ddPlugin: this.props.ddPlugin,
       disableDrag: this.props.disableDrag,
+      disableOneColumnMode: this.props.disableOneColumnMode,
       disableResize: this.props.disableResize,
+      dragIn: this.props.dragIn,
+      dragInOptions: this.props.dragInOptions,
       draggable: this.props.draggable,
+      dragOut: this.props.dragOut,
       float: this.props.float,
       handle: this.props.handle,
       handleClass: this.props.handleClass,
-      height: this.props.height,
       itemClass: this.props.itemClass,
+      margin: this.props.margin,
+      marginTop: this.props.marginTop,
+      marginRight: this.props.marginRight,
+      marginBottom: this.props.marginBottom,
+      marginLeft: this.props.marginLeft,
+      maxRow: this.props.maxRow,
+      minRow: this.props.minRow,
       minWidth: this.props.minWidth,
+      oneColumnModeDomSort: this.props.oneColumnModeDomSort,
       placeholderClass: this.props.placeholderClass,
       placeholderText: this.props.placeholderText,
       removable: this.props.removable,
       removeTimeout: this.props.removeTimeout,
       resizable: this.props.resizable,
+      row: this.props.row,
       rtl: this.props.rtl,
       staticGrid: this.props.staticGrid,
-      verticalMargin: this.props.verticalMargin,
-      width: this.props.width
+      styleInHead: this.props.styleInHead
     }
 
     this.gridstack = GridStack.init(options);
@@ -123,6 +137,7 @@ export default class Grid extends React.Component {
 
 
     this.props.children.forEach(child => {
+      if (!child) return;
       this.gridstack.addWidget(
         '<div class="grid-stack-item"><div id="' + child.props.id + '" class="grid-stack-item-content"></div></div>',
         child.props.x,
